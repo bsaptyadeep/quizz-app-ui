@@ -1,24 +1,23 @@
-import { useState, useEffect } from 'react'
-import LoadingSpinner from './LoadingSpinner'
+import type { QuizStatus } from '../types/quiz'
 
-const messages = [
-  'Scraping website...',
-  'Generating questions...',
-  'Analyzing content...',
-  'Creating quiz...',
-]
+interface ProcessingUIProps {
+  status?: QuizStatus
+}
 
-export default function ProcessingUI() {
-  const [currentMessageIndex, setCurrentMessageIndex] = useState(0)
+export default function ProcessingUI({ status = 'processing' }: ProcessingUIProps) {
+  // Get message based on quiz status
+  const getMessage = (quizStatus: QuizStatus): string => {
+    switch (quizStatus) {
+      case 'processing':
+        return 'Analyzing website'
+      case 'processing_topics':
+        return 'Organizing topics'
+      default:
+        return 'Preparing quiz questions'
+    }
+  }
 
-  useEffect(() => {
-    // Rotate messages every 2 seconds
-    const interval = setInterval(() => {
-      setCurrentMessageIndex((prev) => (prev + 1) % messages.length)
-    }, 2000)
-
-    return () => clearInterval(interval)
-  }, [])
+  const message = getMessage(status)
 
   return (
     <div className="max-w-2xl mx-auto">
@@ -30,13 +29,10 @@ export default function ProcessingUI() {
           </div>
         </div>
 
-        {/* Rotating Message */}
+        {/* Message */}
         <div className="mb-4 min-h-[2rem] flex items-center justify-center">
-          <p
-            key={currentMessageIndex}
-            className="text-xl font-semibold text-gray-900 animate-fade-in"
-          >
-            {messages[currentMessageIndex]}
+          <p className="text-xl font-semibold text-gray-900 animate-fade-in">
+            {message}
           </p>
         </div>
 

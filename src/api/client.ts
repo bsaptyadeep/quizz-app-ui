@@ -4,6 +4,7 @@ import type {
   Quiz,
   SubmitQuizRequest,
   SubmitQuizResponse,
+  TopicsResponse,
   ApiError,
 } from '../types/quiz'
 
@@ -112,6 +113,52 @@ export async function getQuiz(quizId: string): Promise<Quiz> {
     }
     throw {
       message: `Failed to fetch quiz. Please check your connection and try again.`,
+    } as ApiError
+  }
+}
+
+/**
+ * Fetches topics for a quiz by ID
+ */
+export async function getQuizTopics(quizId: string): Promise<TopicsResponse> {
+  try {
+    const response = await fetch(`${API_BASE_URL}/quizzes/${quizId}/topics`)
+
+    return handleResponse<TopicsResponse>(response)
+  } catch (error) {
+    if (error && typeof error === 'object' && 'message' in error) {
+      throw error as ApiError
+    }
+    throw {
+      message: `Failed to fetch quiz topics. Please check your connection and try again.`,
+    } as ApiError
+  }
+}
+
+/**
+ * Generates a quiz from selected topics
+ */
+export async function generateQuizFromTopics(
+  quizId: string,
+  topicIds: string[],
+  difficulty: 'easy' | 'medium' | 'hard' = 'medium'
+): Promise<any> {
+  try {
+    const response = await fetch(`${API_BASE_URL}/quizzes/${quizId}/generate`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ topicIds, difficulty }),
+    })
+
+    return handleResponse<any>(response)
+  } catch (error) {
+    if (error && typeof error === 'object' && 'message' in error) {
+      throw error as ApiError
+    }
+    throw {
+      message: 'Failed to generate quiz from topics. Please check your connection and try again.',
     } as ApiError
   }
 }

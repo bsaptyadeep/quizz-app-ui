@@ -3,6 +3,7 @@ import { useState, useEffect } from 'react'
 import { useQuiz, useSubmitQuiz } from '../hooks'
 import ProcessingUI from '../components/ProcessingUI'
 import LoadingSpinner from '../components/LoadingSpinner'
+import TopicSelectionScreen from '../components/TopicSelectionScreen'
 
 export default function Quiz() {
   const { quizId } = useParams<{ quizId: string }>()
@@ -28,7 +29,12 @@ export default function Quiz() {
 
   // Show processing UI while loading or if quiz is processing
   if (isLoading || !quiz || quiz.status === 'processing') {
-    return <ProcessingUI />
+    return <ProcessingUI status={quiz?.status || 'processing'} />
+  }
+
+  // Show topic selection screen when quiz is processing topics
+  if (quiz.status === 'processing_topics' && quizId) {
+    return <TopicSelectionScreen quizId={quizId} />
   }
 
   // Show error state for network/API errors

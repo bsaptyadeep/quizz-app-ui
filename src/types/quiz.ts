@@ -1,11 +1,26 @@
+export type QuizStatus = 'processing' | 'processing_topics' | 'ready' | 'failed'
+
 export interface CreateQuizRequest {
   source_url: string
 }
 
 export interface CreateQuizResponse {
   quiz_id: string
-  status: string
+  status: QuizStatus
   message: string
+}
+
+export interface Topic {
+  id: string
+  title: string
+  summary: string | null
+  level: number
+  tokenEstimate: number
+}
+
+export interface TopicsResponse {
+  quizId: string
+  topics: Topic[]
 }
 
 export interface Question {
@@ -20,7 +35,7 @@ export interface Quiz {
   sourceUrl: string
   title: string
   questions: Question[]
-  status: string
+  status: QuizStatus
   createdAt: string
 }
 
