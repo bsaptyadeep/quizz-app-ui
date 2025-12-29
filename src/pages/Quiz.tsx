@@ -4,10 +4,14 @@ import { useQuiz, useSubmitQuiz } from '../hooks'
 import ProcessingUI from '../components/ProcessingUI'
 import LoadingSpinner from '../components/LoadingSpinner'
 import TopicSelectionScreen from '../components/TopicSelectionScreen'
+import { useUser } from '@clerk/clerk-react'
+import { useToastContext } from '../contexts/ToastContext'
 
 export default function Quiz() {
   const { quizId } = useParams<{ quizId: string }>()
   const navigate = useNavigate()
+  const { isSignedIn } = useUser()
+  const { showToast } = useToastContext()
   const { data: quiz, isLoading, error } = useQuiz(quizId)
   const [currentQuestion, setCurrentQuestion] = useState(0)
   
@@ -19,6 +23,14 @@ export default function Quiz() {
   // Initialize submit mutation (only when quizId is available)
   const submitQuizMutation = useSubmitQuiz(quizId || '')
   
+  // Authentication guard: redirect to home if not signed in
+  useEffect(() => {
+    if (!isSignedIn) {
+      showToast('Please sign in to continue', 'error')
+      navigate('/')
+    }
+  }, [isSignedIn, navigate, showToast])
+  
   // Initialize answers array when quiz is ready
   useEffect(() => {
     if (quiz?.questions && quiz.status === 'ready') {
@@ -26,6 +38,11 @@ export default function Quiz() {
       setAnswers(new Array(quiz.questions.length).fill(-1))
     }
   }, [quiz])
+  
+  // Return null if not signed in (prevents rendering during redirect)
+  if (!isSignedIn) {
+    return null
+  }
 
   // Show processing UI while loading or if quiz is processing
   if (isLoading || !quiz || quiz.status === 'processing') {

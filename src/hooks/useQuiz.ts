@@ -1,4 +1,5 @@
 import { useQuery } from '@tanstack/react-query'
+import { useAuth } from '@clerk/clerk-react'
 import { getQuiz } from '../api/client'
 import type { Quiz } from '../types/quiz'
 
@@ -9,13 +10,16 @@ import type { Quiz } from '../types/quiz'
  * 'ready', or 'failed'
  */
 export function useQuiz(quizId: string | undefined) {
+  const { getToken } = useAuth()
+
   return useQuery<Quiz>({
     queryKey: ['quiz', quizId],
-    queryFn: () => {
+    queryFn: async () => {
       if (!quizId) {
         throw new Error('Quiz ID is required')
       }
-      return getQuiz(quizId)
+      const token = await getToken()
+      return getQuiz(quizId, token)
     },
     enabled: !!quizId,
     refetchInterval: (query) => {

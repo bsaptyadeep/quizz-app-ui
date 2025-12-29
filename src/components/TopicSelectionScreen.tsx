@@ -75,6 +75,7 @@ export default function TopicSelectionScreen({ quizId }: TopicSelectionScreenPro
     <TopicSelector
       topics={topicsData.topics}
       onGenerate={handleGenerate}
+      isLoading={generateQuizMutation.isPending}
     />
   )
 }

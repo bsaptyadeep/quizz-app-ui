@@ -1,12 +1,14 @@
 import { useState, useEffect } from 'react'
 import type { Topic } from '../types/quiz'
+import LoadingSpinner from './LoadingSpinner'
 
 interface TopicSelectorProps {
   topics: Topic[]
   onGenerate: (topicIds: string[]) => void
+  isLoading?: boolean
 }
 
-export default function TopicSelector({ topics, onGenerate }: TopicSelectorProps) {
+export default function TopicSelector({ topics, onGenerate, isLoading = false }: TopicSelectorProps) {
   // Initialize with all topics selected by default
   const [selectedTopicIds, setSelectedTopicIds] = useState<Set<string>>(() => {
     return new Set(topics.map(topic => topic.id))
@@ -80,14 +82,21 @@ export default function TopicSelector({ topics, onGenerate }: TopicSelectorProps
         <div className="flex justify-end pt-6 border-t border-gray-200">
           <button
             onClick={handleGenerate}
-            disabled={selectedTopicIds.size === 0}
-            className={`px-8 py-3 rounded-lg font-medium transition-all duration-200 ${
-              selectedTopicIds.size > 0
+            disabled={selectedTopicIds.size === 0 || isLoading}
+            className={`px-8 py-3 rounded-lg font-medium transition-all duration-200 flex items-center justify-center gap-2 ${
+              selectedTopicIds.size > 0 && !isLoading
                 ? 'bg-indigo-600 text-white hover:bg-indigo-700 hover:shadow-lg'
                 : 'bg-gray-200 text-gray-400 cursor-not-allowed'
             }`}
           >
-            Generate Quiz
+            {isLoading ? (
+              <>
+                <LoadingSpinner size="sm" className="text-gray-400" />
+                <span>Generating Quiz...</span>
+              </>
+            ) : (
+              'Generate Quiz'
+            )}
           </button>
         </div>
       </div>

@@ -11,6 +11,23 @@ import type {
 const API_BASE_URL = 'http://localhost:8080/api'
 
 /**
+ * Builds headers for API requests with optional Authorization header
+ */
+function buildHeaders(contentType?: string, token?: string | null): HeadersInit {
+  const headers: HeadersInit = {}
+  
+  if (contentType) {
+    headers['Content-Type'] = contentType
+  }
+  
+  if (token) {
+    headers['Authorization'] = `Bearer ${token}`
+  }
+  
+  return headers
+}
+
+/**
  * Maps HTTP status codes to user-friendly error messages
  */
 function getErrorMessage(status: number, backendMessage?: string): string {
@@ -77,14 +94,14 @@ async function handleResponse<T>(response: Response): Promise<T> {
  * Creates a new quiz from a source URL
  */
 export async function createQuiz(
-  data: CreateQuizRequest
+  data: CreateQuizRequest,
+  token?: string | null
 ): Promise<CreateQuizResponse> {
   try {
+    const headers = buildHeaders('application/json', token)
     const response = await fetch(`${API_BASE_URL}/quizzes`, {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
+      headers,
       body: JSON.stringify(data),
     })
 
@@ -102,9 +119,12 @@ export async function createQuiz(
 /**
  * Fetches a quiz by ID
  */
-export async function getQuiz(quizId: string): Promise<Quiz> {
+export async function getQuiz(quizId: string, token?: string | null): Promise<Quiz> {
   try {
-    const response = await fetch(`${API_BASE_URL}/quizzes/${quizId}`)
+    const headers = buildHeaders(undefined, token)
+    const response = await fetch(`${API_BASE_URL}/quizzes/${quizId}`, {
+      headers,
+    })
 
     return handleResponse<Quiz>(response)
   } catch (error) {
@@ -120,9 +140,12 @@ export async function getQuiz(quizId: string): Promise<Quiz> {
 /**
  * Fetches topics for a quiz by ID
  */
-export async function getQuizTopics(quizId: string): Promise<TopicsResponse> {
+export async function getQuizTopics(quizId: string, token?: string | null): Promise<TopicsResponse> {
   try {
-    const response = await fetch(`${API_BASE_URL}/quizzes/${quizId}/topics`)
+    const headers = buildHeaders(undefined, token)
+    const response = await fetch(`${API_BASE_URL}/quizzes/${quizId}/topics`, {
+      headers,
+    })
 
     return handleResponse<TopicsResponse>(response)
   } catch (error) {
@@ -141,14 +164,14 @@ export async function getQuizTopics(quizId: string): Promise<TopicsResponse> {
 export async function generateQuizFromTopics(
   quizId: string,
   topicIds: string[],
-  difficulty: 'easy' | 'medium' | 'hard' = 'medium'
+  difficulty: 'easy' | 'medium' | 'hard' = 'medium',
+  token?: string | null
 ): Promise<any> {
   try {
+    const headers = buildHeaders('application/json', token)
     const response = await fetch(`${API_BASE_URL}/quizzes/${quizId}/generate`, {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
+      headers,
       body: JSON.stringify({ topicIds, difficulty }),
     })
 
@@ -164,18 +187,39 @@ export async function generateQuizFromTopics(
 }
 
 /**
+ * Fetches all quizzes for the current user
+ */
+export async function getUserQuizzes(token?: string | null): Promise<Quiz[]> {
+  try {
+    const headers = buildHeaders(undefined, token)
+    const response = await fetch(`${API_BASE_URL}/quizzes`, {
+      headers,
+    })
+
+    return handleResponse<Quiz[]>(response)
+  } catch (error) {
+    if (error && typeof error === 'object' && 'message' in error) {
+      throw error as ApiError
+    }
+    throw {
+      message: `Failed to fetch quizzes. Please check your connection and try again.`,
+    } as ApiError
+  }
+}
+
+/**
  * Submits quiz answers and returns results
  */
 export async function submitQuiz(
   quizId: string,
-  data: SubmitQuizRequest
+  data: SubmitQuizRequest,
+  token?: string | null
 ): Promise<SubmitQuizResponse> {
   try {
+    const headers = buildHeaders('application/json', token)
     const response = await fetch(`${API_BASE_URL}/quizzes/${quizId}/submit`, {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
+      headers,
       body: JSON.stringify(data),
     })
 
