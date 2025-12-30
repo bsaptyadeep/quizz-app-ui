@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import { useCreateQuiz } from '../hooks'
 import LoadingSpinner from '../components/LoadingSpinner'
 import { useUser, SignInButton } from '@clerk/clerk-react'
+import { Link2 } from 'lucide-react'
 
 export default function Home() {
   const [url, setUrl] = useState('')
@@ -42,7 +43,7 @@ export default function Home() {
   const handleUrlChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newUrl = e.target.value
     setUrl(newUrl)
-    
+
     // Clear validation error when user starts typing
     if (validationError) {
       setValidationError(null)
@@ -74,14 +75,14 @@ export default function Home() {
       const result = await createQuizMutation.mutateAsync({
         source_url: url.trim(),
       })
-      
+
       // Navigate to quiz page after successful creation using returned quiz_id
       navigate(`/quiz/${result.quiz_id}`)
     } catch (err) {
       // Handle API errors - extract backend error messages
       if (err && typeof err === 'object' && 'message' in err) {
         const apiError = err as { message: string; status?: number }
-        
+
         // Use backend error message for 400 (Bad Request) and 429 (Too Many Requests)
         // The API client already extracts readable messages from backend responses
         setApiError(apiError.message)
@@ -110,47 +111,70 @@ export default function Home() {
       </div>
 
       {/* Quiz Generation Form */}
-      <div className="bg-white rounded-lg shadow-lg p-8">
+      <div className="bg-white">
         <form onSubmit={handleSubmit} className="space-y-4">
-          {/* URL Input Field */}
-          <div>
-            <label htmlFor="url" className="block text-sm font-medium text-gray-700 mb-2">
-              Website URL
-            </label>
+          <div className={`
+          flex items-center w-full bg-white border border-gray-200 
+          rounded-full shadow-sm p-1.5 transition-all duration-300
+          hover:shadow-md focus-within:shadow-md focus-within:border-gray-300
+        `}>
+            {/* Link Icon */}
+            <div className="pl-4 pr-2 text-gray-400">
+              <Link2 size={20} strokeWidth={1.5} />
+            </div>
+
+            {/* Input Field */}
             <input
               type="url"
               id="url"
               value={url}
               onChange={handleUrlChange}
-              placeholder="https://example.com/article"
-              className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:border-transparent text-gray-900 placeholder-gray-400 transition-colors ${
-                createQuizMutation.isPending
-                  ? 'border-gray-300 bg-gray-50 opacity-60 cursor-not-allowed'
-                  : hasError
-                  ? 'border-red-300 focus:ring-red-500 bg-red-50'
-                  : 'border-gray-300 focus:ring-indigo-500'
-              }`}
               disabled={createQuizMutation.isPending}
               aria-invalid={hasError}
               aria-describedby={hasError ? 'url-error' : undefined}
+              placeholder="Paste website URL (e.g., notion.so/article...)"
+              className="flex-grow bg-transparent border-none outline-none py-3 px-1 text-slate-700 placeholder:text-gray-400 text-[15px] font-normal"
             />
-            {/* Helper Text */}
-            <p className={`text-sm mt-1 ${hasError ? 'text-red-600' : 'text-gray-500'}`}>
-              Public websites only
-            </p>
+
+            {/* Action Button */}
+            <button
+              type="submit"
+              disabled={!isSignedIn || createQuizMutation.isPending || hasValidationError}
+              className={`
+              flex items-center space-x-2 px-6 py-2.5 rounded-full 
+              font-medium text-white text-[15px] transition-all duration-200
+              disabled:opacity-50 disabled:cursor-not-allowed
+              bg-gradient-to-r from-[#6344F5] to-[#8C52FF]
+              hover:from-[#5536E8] hover:to-[#7B42E8]
+              active:scale-[0.98]
+            `}
+            >
+              {createQuizMutation.isPending ? (
+                <>
+                  <LoadingSpinner size="md" className="text-white" />
+                  <span>Generating Quiz...</span>
+                </>
+              ) : (
+                'Generate Quiz'
+              )}
+            </button>
           </div>
+
+          <p className="mt-3.5 text-slate-400 text-[13px] font-normal tracking-tight text-center">
+            Public websites only
+          </p>
 
           {/* Authentication Message */}
           {!isSignedIn && (
             <div
-              className="bg-amber-50 border border-amber-200 rounded-lg p-4"
+              className="bg-[#f0ecff] border-2 border-[#720dff] rounded-lg p-2 pl-4"
               role="alert"
             >
-              <div className="flex items-start justify-between">
-                <div className="flex items-start flex-1">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center flex-1">
                   <svg
-                    className="w-5 h-5 text-amber-600 mt-0.5 mr-3 flex-shrink-0"
-                    fill="currentColor"
+                    className="w-5 h-5 text-[#720dff] mt-0.5 mr-3 flex-shrink-0"
+                    fill="#6344F5"
                     viewBox="0 0 20 20"
                   >
                     <path
@@ -159,10 +183,10 @@ export default function Home() {
                       clipRule="evenodd"
                     />
                   </svg>
-                  <p className="text-sm text-amber-800">Please sign in to create a quiz</p>
+                  <p className="text-sm text-[#720dff]">Please sign in to create a quiz</p>
                 </div>
                 <SignInButton mode="modal">
-                  <button className="ml-4 px-4 py-2 bg-indigo-600 text-white text-sm rounded-lg hover:bg-indigo-700 transition-colors font-medium whitespace-nowrap">
+                  <button className="ml-4 px-4 py-2 bg-[#720dff] text-white text-sm rounded-md transition-colors font-medium whitespace-nowrap cursor-pointer">
                     Sign In
                   </button>
                 </SignInButton>
@@ -193,25 +217,11 @@ export default function Home() {
               </div>
             </div>
           )}
-
-          {/* Generate Quiz Button */}
-          <button
-            type="submit"
-            disabled={!isSignedIn || createQuizMutation.isPending || hasValidationError}
-            className="w-full px-6 py-3 bg-indigo-600 text-white rounded-lg font-medium hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 disabled:bg-indigo-400 disabled:cursor-not-allowed transition-colors flex items-center justify-center gap-2"
-          >
-            {createQuizMutation.isPending ? (
-              <>
-                <LoadingSpinner size="md" className="text-white" />
-                <span>Generating Quiz...</span>
-              </>
-            ) : (
-              'Generate Quiz'
-            )}
-          </button>
         </form>
       </div>
     </div>
   )
 }
 
+
+// http://localhost:5173/quiz/641ce8da-147a-4705-9190-4e9b327ca97a

@@ -1,8 +1,9 @@
-import { Outlet, Link } from 'react-router-dom'
+import { Outlet, Link, useLocation } from 'react-router-dom'
 import { useState } from 'react'
 import ToastContainer from './ToastContainer'
 import { ToastProvider } from '../contexts/ToastContext'
 import AuthButtons from './AuthButtons'
+import { House } from 'lucide-react'
 
 interface Toast {
   id: string
@@ -12,6 +13,7 @@ interface Toast {
 
 export default function Layout() {
   const [toasts, setToasts] = useState<Toast[]>([])
+  const location = useLocation()
 
   const handleToastAdd = (toast: Toast) => {
     setToasts((prev) => [...prev, toast])
@@ -33,12 +35,14 @@ export default function Layout() {
               Quiz App
             </Link>
             <div className="flex gap-4 items-center">
-              <Link
-                to="/"
-                className="text-gray-700 hover:text-indigo-600 transition-colors font-medium"
-              >
-                Home
-              </Link>
+              {location.pathname !== '/' && (
+                <Link
+                  to="/"
+                  className="text-gray-700 hover:text-indigo-600 transition-colors font-medium"
+                >
+                  <House />
+                </Link>
+              )}
               <AuthButtons />
             </div>
           </nav>
