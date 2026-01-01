@@ -15,7 +15,7 @@ export function useCreateQuiz() {
       const token = await getToken()
       return createQuiz(data, token)
     },
-    onSuccess: (data) => {
+    onSuccess: () => {
       // Invalidate and refetch quiz queries when a new quiz is created
       // This ensures the quiz list stays up to date
       queryClient.invalidateQueries({ queryKey: ['quiz'] })

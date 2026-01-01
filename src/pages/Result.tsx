@@ -7,7 +7,7 @@ import LoadingSpinner from '../components/LoadingSpinner'
 
 export default function Result() {
   const { quizId } = useParams<{ quizId: string }>()
-  const { data: quiz, isLoading: isLoadingQuiz, error: quizError } = useQuiz(quizId)
+  const { isLoading: isLoadingQuiz, error: quizError } = useQuiz(quizId)
   const { showToast } = useToastContext()
   const [submissionResult, setSubmissionResult] = useState<SubmitQuizResponse | null>(null)
   const [isLoadingResults, setIsLoadingResults] = useState(true)
