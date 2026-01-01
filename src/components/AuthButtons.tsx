@@ -1,15 +1,9 @@
 import { SignInButton, SignUpButton, UserButton, useUser } from '@clerk/clerk-react'
 
 export default function AuthButtons() {
-  const { isSignedIn, user } = useUser()
+  const { isSignedIn } = useUser()
 
-  if (isSignedIn) {
-    // Get user's email or name
-    const displayName = user?.fullName || 
-                       user?.firstName || 
-                       user?.primaryEmailAddress?.emailAddress || 
-                       'User'
-    
+  if (isSignedIn) {    
     return (
       <div className="flex items-center gap-3">
         <UserButton />

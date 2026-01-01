@@ -82,7 +82,7 @@ export default function Quiz() {
           </p>
           <Link
             to="/"
-            className="inline-block px-6 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors"
+            className="inline-block px-6 py-2 bg-[#720dff] text-white rounded-lg hover:bg-indigo-700 transition-colors"
           >
             Try Another Link
           </Link>
@@ -119,7 +119,7 @@ export default function Quiz() {
           </p>
           <Link
             to="/"
-            className="inline-block px-6 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors"
+            className="inline-block px-6 py-2 bg-[#720dff] text-white rounded-lg hover:bg-indigo-700 transition-colors"
           >
             Try Another Link
           </Link>
@@ -237,16 +237,13 @@ export default function Quiz() {
     <div className="max-w-4xl mx-auto px-4 py-8">
       {/* Quiz Title */}
       <div className="mb-8">
-        <h1 className="text-4xl font-bold text-gray-900 mb-2">
-          {quiz.title || `Quiz ${quizId}`}
-        </h1>
         <div className="flex items-center justify-between text-sm text-gray-600 mt-4">
           <span className="font-medium">Question {currentQuestion + 1} of {questions.length}</span>
           <span className="text-gray-500">{Math.round(((currentQuestion + 1) / questions.length) * 100)}% Complete</span>
         </div>
         <div className="w-full bg-gray-200 rounded-full h-2.5 mt-3">
           <div
-            className="bg-indigo-600 h-2.5 rounded-full transition-all duration-300"
+            className="bg-[#720dff] h-2.5 rounded-full transition-all duration-300"
             style={{ width: `${((currentQuestion + 1) / questions.length) * 100}%` }}
           />
         </div>
@@ -287,7 +284,7 @@ export default function Quiz() {
                     <div
                       className={`w-6 h-6 rounded-full border-2 mr-4 flex items-center justify-center flex-shrink-0 transition-all ${
                         isSelected
-                          ? 'border-indigo-600 bg-indigo-600'
+                          ? 'border-[#720dff] bg-[#720dff]'
                           : 'border-gray-300 bg-white'
                       }`}
                     >
@@ -327,7 +324,7 @@ export default function Quiz() {
               disabled={!canSubmit}
               className={`px-8 py-3 rounded-lg font-medium transition-all duration-200 flex items-center justify-center gap-2 ${
                 canSubmit
-                  ? 'bg-indigo-600 text-white hover:bg-indigo-700 hover:shadow-lg'
+                  ? 'bg-[#720dff] text-white hover:bg-[#720dff] hover:shadow-lg'
                   : 'bg-gray-200 text-gray-400 cursor-not-allowed'
               }`}
             >
@@ -346,7 +343,7 @@ export default function Quiz() {
               disabled={!hasAnswer || isSubmitting || submitQuizMutation.isPending}
               className={`px-8 py-3 rounded-lg font-medium transition-all duration-200 ${
                 hasAnswer && !isSubmitting && !submitQuizMutation.isPending
-                  ? 'bg-indigo-600 text-white hover:bg-indigo-700 hover:shadow-lg'
+                  ? 'bg-[#720dff] text-white hover:bg-[#720dff] hover:shadow-lg'
                   : 'bg-gray-200 text-gray-400 cursor-not-allowed opacity-60'
               }`}
             >
@@ -360,7 +357,7 @@ export default function Quiz() {
       <div className="text-center">
         <Link
           to="/"
-          className="inline-flex items-center text-indigo-600 hover:text-indigo-700 font-medium transition-colors"
+          className="inline-flex items-center text-[#720dff] hover:text-[#720dff] font-medium transition-colors"
         >
           ← Back to Home
         </Link>

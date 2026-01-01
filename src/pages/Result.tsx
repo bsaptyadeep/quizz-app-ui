@@ -169,10 +169,6 @@ export default function Result() {
       <div className="bg-white rounded-lg shadow-lg border border-gray-200 p-8">
         {/* Result Header */}
         <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 mb-6">
-            {quiz?.title || `Quiz ${quizId}`} Results
-          </h1>
-          
           {/* Visual Success/Failure Indicator */}
           <div className="mb-6">
             {isSuccess ? (
