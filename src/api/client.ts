@@ -8,7 +8,7 @@ import type {
   ApiError,
 } from '../types/quiz'
 
-const API_BASE_URL = 'http://localhost:8080/api'
+const API_BASE_URL = 'https://quiz-app-backend-f959.onrender.com/'
 
 /**
  * Builds headers for API requests with optional Authorization header
